@@ -1,0 +1,26 @@
+﻿<div id="terminal"></div>
+<script>
+    jQuery(document).ready(function ($) {
+        $('#terminal').terminal(function (command, term) {
+            $.post(
+                "",
+                { comm: command },
+                function (data) {
+                    var str =       "<div class='table'>";
+                    $.each(data, function (i, book) {
+                        str = str + "<div class='row'>";
+                        str = str + "   <div class='cell'>" + i + "</div>" +
+                                            "<div class='cell'>" + book.Author + "</div>" +
+                                            "<div class='cell'>" + book.Name + "</div>" +
+                                            "<div class='cell'>" + book.Path + "</div>";
+                        str = str +     "</div>";
+                    });
+                    str = str +     "</div>";
+                    term.echo(str, { raw: true });
+                });
+            }, {
+
+            greetings: "You are authenticated",
+        });
+    });
+</script>
