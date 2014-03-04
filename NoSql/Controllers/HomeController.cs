@@ -13,8 +13,9 @@ using MongoRepository;
 using System.Runtime.Serialization ;
 using NoSql.DAL;
 using NoSql.Models;
+using NoSql.Models.DbModels;
 
-namespace NoSql.Controllers
+namespace NoSql.ControllersS
 {
     public class HomeController : Controller
     {
@@ -27,17 +28,16 @@ namespace NoSql.Controllers
 
         public ActionResult Index()
         {
-            _librarian.GetBooks();
             return View();
         }
 
         [HttpPost]
-        public JsonResult Index(string comm)
+        public JsonResult GetBooks(string comm)
         {
-            var result = new List<Book> {new Book() {Author = "Muracami", Name = "What I`m tolking about...", Path = @"C:\\dyd.fb2"}, new Book() {Author = "Frai", Name = "Stranger"}};
-            var jsonResult = result.ToJson();
-            var s =  new JsonResult(){Data = result};
-            return s;
+            _librarian.UpdateLiblirary();
+            var result = new List<Book> {new Book() {Author = "Muracami", Name = "What I`m tolking about...", Path = @"C:\\dyd.fb2"},
+                                        new Book() {Author = "Frai", Name = "Stranger"}};
+            return  new JsonResult(){Data = result};
         }
 
         public ActionResult About()
@@ -53,10 +53,5 @@ namespace NoSql.Controllers
 
             return View();
         }
-    }
-
-    public class Entry : Entity
-    {
-        public string Name { get; set; }
     }
 }

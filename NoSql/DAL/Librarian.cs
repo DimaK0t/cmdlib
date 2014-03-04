@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Web;
 using MongoRepository;
 using NoSql.Controllers;
 using NoSql.Models;
+using NoSql.Models.DbModels;
 
 namespace NoSql.DAL
 {
@@ -20,22 +22,19 @@ namespace NoSql.DAL
 
         public IEnumerable<Book> GetBooks()
         {
-            var s = _repo;
-
-             var entity = new Entry {Name = "Tom"};
-
-            MongoRepository<Entry> repository =new MongoRepository<Entry>();
-            MongoRepositoryManager<Entry> manager = new MongoRepositoryManager<Entry>();
-            
-            repository.Add(entity);
-            var id = entity.Id; // Insert will set the Id if necessary (as it was in this example)
-
             return new List<Book>();
+        }
+
+        public void UpdateLiblirary()
+        {
+            DirectoryInfo directoryInfo = new DirectoryInfo(@"D:\Dropbox\Library\Прочитанные");
+            var s = directoryInfo.GetFiles("*.*",SearchOption.AllDirectories).Where(x => x.Extension != ".exe");
         }
     }
 
     public interface ILibrarian
     {
         IEnumerable<Book> GetBooks();
+        void UpdateLiblirary();
     }
 }

@@ -1,6 +1,7 @@
 using MongoRepository;
 using NoSql.DAL;
 using NoSql.Models;
+using NoSql.Models.DbModels;
 
 [assembly: WebActivator.PreApplicationStartMethod(typeof(NoSql.App_Start.NinjectWebCommon), "Start")]
 [assembly: WebActivator.ApplicationShutdownMethodAttribute(typeof(NoSql.App_Start.NinjectWebCommon), "Stop")]
