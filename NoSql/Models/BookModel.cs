@@ -10,5 +10,7 @@ namespace NoSql.Models
         public string Author { get; set; }
 
         public string Name { get; set; }
+
+        public string Extension { get; set; }
     }
 }

@@ -1,39 +1,74 @@
 ﻿<div id="terminal"></div>
 <script>
-    jQuery(document).ready(function($) {
+    jQuery(document).ready(function ($) {
         $('#terminal').terminal(function (command, term) {
-            switch (command) {
-            case "books":
-            {
-                var url = "Home/GetBooks";
-                getBooks(url, term);
+            this.url = "";
+            if (command == 'books') {
+                url = "Home/GetBooks";
+                getBooks(term);
             }
-            case "help":
+            else if (command.indexOf("updatedb") == 0) {
+                var flag = command.split('-')[1];
+                url = "Home/UpdateDb";
+                updateDb(term, flag);
+            }
+            else if (command.indexOf("get") == 0) {
+                url = "Home/GetBook";
+                var number = command.split('-')[1];
+                getBook(term, number);
+            }
+            else if (command == "help") {
+                term.echo("books");
+                term.echo("updatedb -flag");
+                term.echo("get -number");
+            }
+            else {
                 term.echo("Type 'help' to get all avaible commands");
             }
-            
         },
         {
             greetings: "Welcome to the Library.",
         });
     });
 
-    function getBooks(url, term) {
+    function getBook(term, number) {
+        $.post(
+           url,
+           { number: number },
+           function (data) {
+               if (data == "succed") {
+                   window.location = window.location + url + '/' + number;
+               } else {
+                   term.echo("enter correct book number");
+               }
+           });
+    }
+
+    function updateDb(term, flag) {
         $.post(
             url,
-            function(data) {
+            { flag: flag },
+            function (data) {
+                term.echo(data);
+            });
+    }
+
+    function getBooks(term) {
+        $.post(
+            url,
+            function (data) {
                 var str = "<div class='table'>";
-                $.each(data, function(i, book) {
+                $.each(data, function (i, book) {
                     str = str + "<div class='row'>";
                     str = str + "   <div class='cell'>" + i + "</div>" +
                         "<div class='cell'>" + book.Author + "</div>" +
                         "<div class='cell'>" + book.Name + "</div>" +
-                        "<div class='cell'>" + book.Path + "</div>";
+                        "<div class='cell'>" + book.Extension + "</div>" +
+                        "<div class='cell'>" + book.Id + "</div>";
                     str = str + "</div>";
                 });
                 str = str + "</div>";
                 term.echo(str, { raw: true });
             });
     }
-
 </script>
