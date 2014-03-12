@@ -1,7 +1,7 @@
 ﻿jQuery(document).ready(function ($) {
     $('#terminal').terminal(function (command, term) {
         this.url = "";
-        if (command == 'foo') {
+        if (command == 'login') {
             term.login(function (user, password, callback) {
                 $.post("/Account/Login", { UserName: user, Password: password, RememberMe: false }).done(function(data) {
                     if (data.length != 0) {
@@ -15,7 +15,7 @@
         }else
         if (command == 'books') {
             url = "Home/GetBooks";
-            term.echo("Thinking, please wait..");
+           
             getBooks(term);
         }
         else if (command.indexOf("updatedb") == 0) {
@@ -32,6 +32,7 @@
             term.echo("books");
             term.echo("updatedb <flag>");
             term.echo("get <book_number>");
+            term.echo("login");
         }
         else if (command == "login") {
             url = "Account/Login";
