@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security;
+using MongoDB.AspNet.Identity;
 using NoSql.Models;
 
 namespace NoSql.Controllers
@@ -15,8 +18,7 @@ namespace NoSql.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        public AccountController()
-            : this(new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext())))
+        public AccountController(): this(new UserManager<ApplicationUser>(new UserStore<ApplicationUser>("MongoServerSettings")))
         {
         }
 
@@ -40,8 +42,8 @@ namespace NoSql.Controllers
         // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        //[ValidateAntiForgeryToken]
+        public async Task<string> Login(LoginViewModel model, string returnUrl)
         {
             if (ModelState.IsValid)
             {
@@ -49,7 +51,8 @@ namespace NoSql.Controllers
                 if (user != null)
                 {
                     await SignInAsync(user, model.RememberMe);
-                    return RedirectToLocal(returnUrl);
+
+                    return Guid.NewGuid().ToString();
                 }
                 else
                 {
@@ -57,9 +60,32 @@ namespace NoSql.Controllers
                 }
             }
 
-            // If we got this far, something failed, redisplay form
-            return View(model);
+            return null;
         }
+
+       // [HttpPost]
+       // [AllowAnonymous]
+       //// [ValidateAntiForgeryToken]
+       // public async Task<bool> Login(string userName, string password, string returnUrl, bool rememberMe = false)
+       // {
+       //     if (ModelState.IsValid)
+       //     {
+       //         var user = await UserManager.FindAsync(userName, password);
+       //         if (user != null)
+       //         {
+       //             await SignInAsync(user, rememberMe);
+       //             return true;
+       //         }
+       //         else
+       //         {
+       //             ModelState.AddModelError("", "Invalid username or password.");
+       //         }
+       //     }
+
+       //     // If we got this far, something failed, redisplay form
+       //     //  return View(model);
+       //     return false;
+       // }
 
         //
         // GET: /Account/Register

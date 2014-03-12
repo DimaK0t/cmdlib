@@ -2,10 +2,7 @@ D:\VS_Projects\NoSql\NoSql\bin\NoSql.dll.config
 D:\VS_Projects\NoSql\NoSql\bin\NoSql.dll
 D:\VS_Projects\NoSql\NoSql\bin\NoSql.pdb
 D:\VS_Projects\NoSql\NoSql\bin\Antlr3.Runtime.dll
-D:\VS_Projects\NoSql\NoSql\bin\EntityFramework.dll
-D:\VS_Projects\NoSql\NoSql\bin\EntityFramework.SqlServer.dll
 D:\VS_Projects\NoSql\NoSql\bin\Microsoft.AspNet.Identity.Core.dll
-D:\VS_Projects\NoSql\NoSql\bin\Microsoft.AspNet.Identity.EntityFramework.dll
 D:\VS_Projects\NoSql\NoSql\bin\Microsoft.AspNet.Identity.Owin.dll
 D:\VS_Projects\NoSql\NoSql\bin\Microsoft.Owin.dll
 D:\VS_Projects\NoSql\NoSql\bin\Microsoft.Owin.Host.SystemWeb.dll
@@ -36,11 +33,8 @@ D:\VS_Projects\NoSql\NoSql\bin\System.Web.WebPages.Deployment.xml
 D:\VS_Projects\NoSql\NoSql\bin\System.Web.WebPages.Razor.xml
 D:\VS_Projects\NoSql\NoSql\bin\Newtonsoft.Json.xml
 D:\VS_Projects\NoSql\NoSql\bin\Antlr3.Runtime.pdb
-D:\VS_Projects\NoSql\NoSql\bin\EntityFramework.xml
-D:\VS_Projects\NoSql\NoSql\bin\EntityFramework.SqlServer.xml
 D:\VS_Projects\NoSql\NoSql\bin\Microsoft.AspNet.Identity.Core.xml
 D:\VS_Projects\NoSql\NoSql\bin\Microsoft.AspNet.Identity.Owin.xml
-D:\VS_Projects\NoSql\NoSql\bin\Microsoft.AspNet.Identity.EntityFramework.xml
 D:\VS_Projects\NoSql\NoSql\bin\Microsoft.Owin.xml
 D:\VS_Projects\NoSql\NoSql\bin\Microsoft.Owin.Host.SystemWeb.xml
 D:\VS_Projects\NoSql\NoSql\bin\Microsoft.Owin.Security.xml
@@ -68,3 +62,4 @@ D:\VS_Projects\NoSql\NoSql\bin\Ninject.Web.Common.pdb
 D:\VS_Projects\NoSql\NoSql\bin\Ninject.Web.Common.xml
 D:\VS_Projects\NoSql\NoSql\bin\Ninject.Web.Mvc.pdb
 D:\VS_Projects\NoSql\NoSql\bin\Ninject.Web.Mvc.xml
+D:\VS_Projects\NoSql\NoSql\bin\MongoDB.AspNet.Identity.dll

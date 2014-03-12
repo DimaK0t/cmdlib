@@ -52,12 +52,10 @@ namespace NoSql.Controllers
             return  new JsonResult(){Data = _librarian.GetBooks()};
         }
 
-        [HttpPost]
-        public string GetBook(string number)
+        [HttpGet]
+        public bool Validate(string number)
         {
-            return number == null || number.IsEmpty() || number.AsInt() > _librarian.GetBooks().Count()
-                ? "failed"
-                : "succed";
+            return number != null && !number.IsEmpty() && number.AsInt() <= _librarian.GetBooks().Count();
         }
 
         [HttpGet]

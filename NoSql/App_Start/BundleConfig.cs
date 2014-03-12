@@ -24,7 +24,8 @@ namespace NoSql
                       "~/Scripts/respond.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/terminal").Include(
-                      "~/Scripts/jquery.terminal-0.8.2.js"
+                      "~/Scripts/jquery.terminal-0.8.2.js",
+                      "~/Scripts/terminal.js"
                       ));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
+﻿using MongoDB.AspNet.Identity;
 
 namespace NoSql.Models
 {
@@ -7,10 +7,10 @@ namespace NoSql.Models
     {
     }
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext //: IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            : base("DefaultConnection")
+           // : base("DefaultConnection")
         {
         }
     }
