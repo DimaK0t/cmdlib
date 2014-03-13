@@ -28,6 +28,7 @@
             term.echo("updatedb <flag>");
             term.echo("get <book_number>");
             term.echo("login");
+            term.echo("logout");
         } else {
             term.echo("Type 'help' to get all avaible commands");
         }
@@ -53,11 +54,20 @@ function logout(term) {
 }
 
 function getBook(term, number) {
-    $.get(url ,{number:number}).done(function(data) {if (data == "True") {window.location = window.location + "Home/GetBook" + '/' + number;} else {term.echo("enter correct book number");}});
+    $.get(url, { number: number })
+        .done(function () { window.location = window.location + "Home/GetBook" + '/' + number; })
+        .fail(function (xhr) {
+            term.error(xhr.statusText);
+            term.error("enter correct book number");
+    });
 }
 
 function updateDb(term, flag) {
-    $.post(url, { flag: flag }).done(function (data) {term.echo(data);});
+    $.post(url, { flag: flag })
+        .done(function () { term.echo("DB has been updated"); })
+        .fail(function(xhr) {
+            term.error(xhr.statusText);
+    });
 }
 
 function getBooks(term) {

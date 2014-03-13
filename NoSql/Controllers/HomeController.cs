@@ -1,20 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using NoSql.DAL;
+using System;
 using System.Linq;
+using System.Net;
 using System.Net.Mime;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.WebPages;
-using Microsoft.Ajax.Utilities;
-using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Driver.Builders;
-using MongoDB.Driver.GridFS;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using MongoDB.Driver.Linq;
-using MongoRepository;
-using System.Runtime.Serialization ;
-using NoSql.DAL;
 
 namespace NoSql.Controllers
 {
@@ -33,16 +23,16 @@ namespace NoSql.Controllers
         }
 
         [HttpPost]
-        public string UpdateDb(string flag)
+        [Authorize(Users = "admin")]
+        public void UpdateDb(string flag)
         {
             try
             {
                 _librarian.UpdateDbLiblirary(flag == "clean");
-                return "succeed";
             }
-            catch (Exception e)
+            catch (Exception )
             {
-                return "failed" + e.Message;
+                Response.SubStatusCode = (int) HttpStatusCode.InternalServerError;
             }
         }
 
@@ -53,9 +43,12 @@ namespace NoSql.Controllers
         }
 
         [HttpGet]
-        public bool Validate(string number)
+        public void Validate(string number)
         {
-            return number != null && !number.IsEmpty() && number.AsInt() <= _librarian.GetBooks().Count();
+            if (!(number != null && !number.IsEmpty() && number.AsInt() <= _librarian.GetBooks().Count()))
+            {
+                Response.StatusCode = (int) HttpStatusCode.NotFound;
+            }
         }
 
         [HttpGet]
