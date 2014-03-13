@@ -73,7 +73,5 @@ namespace NoSql.Controllers
 
             return View();
         }
-
-
     }
 }
