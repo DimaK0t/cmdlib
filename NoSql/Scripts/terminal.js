@@ -1,18 +1,18 @@
 ﻿jQuery(document).ready(function ($) {
+
     $('#terminal').terminal(function (command, term) {
         this.url = "";
-
+        
         if (command == 'login') {
-            term.login(function (user, password, callback) {
+            term.login(function(user, password, callback) {
                 url = "/Account/Login";
                 login(term, user, password, callback);
             });
-        }
-        else if (command == 'logout') {
+
+        } else if (command == 'logout') {
             url = "Account/Logoff";
             logout(term);
-        }
-        else if (command == 'books') {
+        } else if (command == 'books') {
             url = "Home/GetBooks";
             getBooks(term);
         } else if (command.indexOf("updatedb") == 0) {
@@ -32,34 +32,41 @@
         } else {
             term.echo("Type 'help' to get all avaible commands");
         }
+
+        $(window).scrollTop($(document).height());
     },
     {
+        prompt: 'test>',
         greetings: "Welcome to the Library.",
     });
 });
 
 function login(term, user, password, callback) {
-    $.post(url, { UserName: user, Password: password, RememberMe: false }).done(function (data) {
+    $.post(url, { UserName: user, Password: password, RememberMe: false }).done(function(data) {
         if (data.length != 0) {
             callback(data);
             term.echo("Welcome, " + user);
         } else {
             callback(null);
         }
+    }).fail(function(xhr) {
+        term.error(xhr.statusText);;
     });
 }
 
 function logout(term) {
-    $.post(url).done(function() { term.echo("You've successfully signed out"); });
+    $.post(url).done(function () { term.echo("You've successfully signed out"); }).fail(function(xhr) {
+        term.error(xhr.statusText);
+    });
 }
 
 function getBook(term, number) {
     $.get(url, { number: number })
-        .done(function () { window.location = window.location + "Home/GetBook" + '/' + number; })
-        .fail(function (xhr) {
+        .done(function() { window.location = window.location + "Home/GetBook" + '/' + number; })
+        .fail(function(xhr) {
             term.error(xhr.statusText);
             term.error("enter correct book number");
-    });
+        });
 }
 
 function updateDb(term, flag) {
@@ -71,19 +78,23 @@ function updateDb(term, flag) {
 }
 
 function getBooks(term) {
-    $.post(url).done(
-        function (data) {
-            var str = "<div class='table'>";
-            $.each(data, function (i, book) {
-                str = str + "<div class='row'>";
-                str = str + "   <div class='cell'>" + i + "</div>" +
-                    "<div class='cell'>" + book.Author + "</div>" +
-                    "<div class='cell'>" + book.Name + "</div>" +
-                    "<div class='cell'>" + book.Extension + "</div>" +
-                    "<div class='cell'>" + book.Id + "</div>";
+    $.post(url)
+        .done(
+            function(data) {
+                var str = "<div class='table'>";
+                $.each(data, function(i, book) {
+                    str = str + "<div class='row'>";
+                    str = str + "   <div class='cell'>" + i + "</div>" +
+                        "<div class='cell'>" + book.Author + "</div>" +
+                        "<div class='cell'>" + book.Name + "</div>" +
+                        "<div class='cell'>" + book.Extension + "</div>" +
+                        "<div class='cell'>" + book.Id + "</div>";
+                    str = str + "</div>";
+                });
                 str = str + "</div>";
-            });
-            str = str + "</div>";
-            term.echo(str, { raw: true });
+                term.echo(str, { raw: true });
+            })
+        .fail(function(xhr) {
+            term.error(xhr.statusText);;
         });
 }

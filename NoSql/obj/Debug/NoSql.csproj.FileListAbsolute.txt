@@ -63,4 +63,3 @@ D:\VS_Projects\NoSql\NoSql\bin\Ninject.Web.Common.xml
 D:\VS_Projects\NoSql\NoSql\bin\Ninject.Web.Mvc.pdb
 D:\VS_Projects\NoSql\NoSql\bin\Ninject.Web.Mvc.xml
 D:\VS_Projects\NoSql\NoSql\bin\MongoDB.AspNet.Identity.dll
-D:\VS_Projects\NoSql\NoSql\obj\Debug\NoSql.csprojResolveAssemblyReference.cache

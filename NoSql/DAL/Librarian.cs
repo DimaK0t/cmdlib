@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Web.Configuration;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Builders;
@@ -31,9 +33,10 @@ namespace NoSql.DAL
             {
                 _repo.Collection.RemoveAll();
             }
-
+            var libraryPath = WebConfigurationManager.AppSettings["libraryPath"];
+            
             //TODO: Move it .config
-            DirectoryInfo directoryInfo = new DirectoryInfo(@"D:\Dropbox\Library\Прочитанные");
+            DirectoryInfo directoryInfo = new DirectoryInfo(libraryPath);
             var files = directoryInfo.GetFiles("*.*",SearchOption.AllDirectories).Where(x => x.Extension != ".exe").ToList();
 
             foreach (var file in files)
