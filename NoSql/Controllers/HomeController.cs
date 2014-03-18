@@ -74,7 +74,6 @@ namespace NoSql.Controllers
         [HttpGet]
         public void Validate(int number)
         {
-
             if (!_repo.Exists(x => x.BookNumber == number))
             {
                 Response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -84,7 +83,6 @@ namespace NoSql.Controllers
         [HttpGet]
         public ActionResult GetBook(string bookNumber)
         {
-
             var book = _repo.First(x => x.BookNumber == int.Parse(bookNumber));
             byte[] fileBytes = System.IO.File.ReadAllBytes(book.Path);
             string fileName = string.Format("{0} - {1}{2}",book.Author, book.Name, book.Extension);
