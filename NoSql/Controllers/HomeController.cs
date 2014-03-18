@@ -1,20 +1,25 @@
-﻿using NoSql.DAL;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Web.Configuration;
+using System.Web.UI;
+using MongoRepository;
 using System;
 using System.Linq;
 using System.Net;
 using System.Net.Mime;
 using System.Web.Mvc;
 using System.Web.WebPages;
+using NoSql.Models.DbModels;
 
 namespace NoSql.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILibrarian _librarian;
+        public IRepository<Book> _repo ;
 
-        public HomeController(ILibrarian librarian)
+        public HomeController(IRepository<Book> repository)
         {
-            _librarian = librarian;
+            _repo = repository;
         }
 
         public ActionResult Index()
@@ -28,35 +33,61 @@ namespace NoSql.Controllers
         {
             try
             {
-                _librarian.UpdateDbLiblirary(flag == "clean");
+                UpdateDbLiblirary(flag == "clean");
             }
-            catch (Exception )
+            catch (Exception e)
             {
                 Response.SubStatusCode = (int) HttpStatusCode.InternalServerError;
             }
         }
 
         [HttpPost]
-        public JsonResult GetBooks(string comm)
+        public JsonResult GetBooks(int pageNumber = 1)
         {
-            return  new JsonResult(){Data = _librarian.GetBooks()};
+            var booksPerPage = 30;
+            int.TryParse(WebConfigurationManager.AppSettings["booksPerPage"], out booksPerPage);
+            var books = _repo.OrderBy(x => x.BookNumber).ToList();
+            List<Book> booksForView;
+            var pagesCount = books.Count() / booksPerPage + (books.Count() % booksPerPage > 0 ? 1 : 0);
+
+            if (pageNumber > pagesCount)
+            {
+                Response.StatusCode = (int) HttpStatusCode.NotFound;
+                return null;
+            }
+
+            if (pageNumber <= 0)
+            {
+                booksPerPage = books.Count;
+                booksForView = books;
+                pageNumber = 1;
+            }
+            else
+            {
+                var lastPageAmount = books.Count - ((pageNumber - 1) * booksPerPage);
+                booksForView = books.GetRange((pageNumber - 1) * booksPerPage, Math.Min(lastPageAmount, booksPerPage));
+            }
+
+            return new JsonResult() { Data = new {Books = booksForView, PagesCount = pagesCount, CurrentPage = pageNumber }};
         }
 
         [HttpGet]
-        public void Validate(string number)
+        public void Validate(int number)
         {
-            if (!(number != null && !number.IsEmpty() && number.AsInt() <= _librarian.GetBooks().Count()))
+
+            if (!_repo.Exists(x => x.BookNumber == number))
             {
-                Response.StatusCode = (int) HttpStatusCode.NotFound;
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
             }
         }
 
         [HttpGet]
-        public ActionResult GetBook(int? id)
+        public ActionResult GetBook(string bookNumber)
         {
-            var book = _librarian.GetBooks().ElementAt(id.Value);
+
+            var book = _repo.First(x => x.BookNumber == int.Parse(bookNumber));
             byte[] fileBytes = System.IO.File.ReadAllBytes(book.Path);
-            string fileName = book.Name + book.Extension;
+            string fileName = string.Format("{0} - {1}{2}",book.Author, book.Name, book.Extension);
             return File(fileBytes, MediaTypeNames.Application.Octet, fileName);
         }
 
@@ -72,6 +103,33 @@ namespace NoSql.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
+        }
+
+        private void UpdateDbLiblirary(bool cleanBefore = false)
+        {
+            if (cleanBefore)
+            {
+                _repo.Collection.RemoveAll();
+            }
+            var libraryPath = WebConfigurationManager.AppSettings["libraryPath"];
+
+            var directoryInfo = new DirectoryInfo(libraryPath);
+            var files = directoryInfo.GetFiles("*.*", SearchOption.AllDirectories).Where(x => x.Extension != ".exe").ToList();
+
+            for (var i = 0; i < files.Count; i++)
+            {
+                var file = files[i];
+                var author = file.Name.Substring(0, file.Name.IndexOf('-')).Trim();
+                var name = Path.GetFileNameWithoutExtension(file.Name.Substring(file.Name.IndexOf('-') + 1).Trim());
+                var extenstion = file.Extension;
+                var path = file.FullName;
+                var book = new Book() { Author = author, Name = name, Extension = extenstion, Path = path, BookNumber = i };
+
+                if (!_repo.Exists(x => x.Author == book.Author && x.Name == book.Name))
+                {
+                    _repo.Add(book);
+                }
+            }
         }
     }
 }

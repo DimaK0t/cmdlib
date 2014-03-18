@@ -12,9 +12,12 @@
         } else if (command == 'logout') {
             url = "Account/Logoff";
             logout(term);
-        } else if (command == 'books') {
+        } else if (command.indexOf('books') == 0) {
             url = "Home/GetBooks";
-            getBooks(term);
+            var pageNumber = command.split(' ')[1];
+            if (pageNumber == 'all') {
+                pageNumber = -1;}
+            getBooks(term, pageNumber);
         } else if (command.indexOf("updatedb") == 0) {
             var flag = command.split(' ')[1];
             url = "Home/UpdateDb";
@@ -24,19 +27,17 @@
             var number = command.split(' ')[1];
             getBook(term, number);
         } else if (command == "help") {
-            term.echo("books");
-            term.echo("updatedb <flag>");
+            term.echo("books <page_number>");
+            term.echo("updatedb/updatedb clean");
             term.echo("get <book_number>");
             term.echo("login");
             term.echo("logout");
         } else {
             term.echo("Type 'help' to get all avaible commands");
         }
-
-        $(window).scrollTop($(document).height());
     },
     {
-        prompt: 'test>',
+        prompt: '>',
         greetings: "Welcome to the Library.",
     });
 });
@@ -62,7 +63,10 @@ function logout(term) {
 
 function getBook(term, number) {
     $.get(url, { number: number })
-        .done(function() { window.location = window.location + "Home/GetBook" + '/' + number; })
+        .done(function() {
+            window.location = window.location + "Home/GetBook" + '/' + number; 
+            term.echo("done");
+        })
         .fail(function(xhr) {
             term.error(xhr.statusText);
             term.error("enter correct book number");
@@ -77,21 +81,23 @@ function updateDb(term, flag) {
     });
 }
 
-function getBooks(term) {
-    $.post(url)
+function getBooks(term, pageNumber) {
+    $.post(url, { pageNumber: pageNumber })
         .done(
             function(data) {
                 var str = "<div class='table'>";
-                $.each(data, function(i, book) {
-                    str = str + "<div class='row'>";
-                    str = str + "   <div class='cell'>" + i + "</div>" +
-                        "<div class='cell'>" + book.Author + "</div>" +
-                        "<div class='cell'>" + book.Name + "</div>" +
-                        "<div class='cell'>" + book.Extension + "</div>" +
-                        "<div class='cell'>" + book.Id + "</div>";
-                    str = str + "</div>";
+                $.each(data.Books, function(i, book) {
+                    str = str +
+                        "<div class='row'>" +
+                            "<div class='cell'>" + book.BookNumber + "</div>" +
+                            "<div class='cell'>" + book.Author + "</div>" +
+                            "<div class='cell'>" + book.Name + "</div>" +
+                            "<div class='cell'>" + book.Extension + "</div>" +
+                            //"<div class='cell id'>" + book.Id + "</div>" +
+                        "</div>";
                 });
                 str = str + "</div>";
+                term.echo("Page " + data.CurrentPage + " of " + data.PagesCount);
                 term.echo(str, { raw: true });
             })
         .fail(function(xhr) {

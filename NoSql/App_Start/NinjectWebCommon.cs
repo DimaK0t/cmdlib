@@ -1,5 +1,4 @@
 using MongoRepository;
-using NoSql.DAL;
 using NoSql.Models;
 using NoSql.Models.DbModels;
 
@@ -58,7 +57,6 @@ namespace NoSql.App_Start
         private static void RegisterServices(IKernel kernel)
         {
             kernel.Bind<IRepository<Book>>().To<MongoRepository<Book>>();
-            kernel.Bind<ILibrarian>().To<Librarian>();
         }        
     }
 }

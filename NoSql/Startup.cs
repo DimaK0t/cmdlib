@@ -1,4 +1,6 @@
 ﻿using Microsoft.Owin;
+using MongoDB.Bson.Serialization;
+using NoSql.Models.DbModels;
 using Owin;
 
 [assembly: OwinStartupAttribute(typeof(NoSql.Startup))]
