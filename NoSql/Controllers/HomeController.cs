@@ -19,6 +19,7 @@ namespace NoSql.Controllers
 
         public HomeController(IRepository<Book> repository)
         {
+
             _repo = repository;
         }
 
@@ -61,6 +62,7 @@ namespace NoSql.Controllers
                 booksPerPage = books.Count;
                 booksForView = books;
                 pageNumber = 1;
+                pagesCount = 1;
             }
             else
             {
