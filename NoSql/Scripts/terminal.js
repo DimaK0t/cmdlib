@@ -38,7 +38,8 @@
     },
     {
         prompt: '>',
-        greetings: "Welcome to the Library.",
+        greetings: "Welcome to the Library.\n" +
+                    "* Type 'help' to see all commands.",
     });
 });
 
