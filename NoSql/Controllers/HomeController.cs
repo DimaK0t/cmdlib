@@ -2,6 +2,7 @@
 using System.IO;
 using System.Web.Configuration;
 using System.Web.UI;
+using System.Web.UI.WebControls.WebParts;
 using MongoRepository;
 using System;
 using System.Linq;
@@ -91,9 +92,7 @@ namespace NoSql.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
+            return PartialView();
         }
 
         public ActionResult Contact()

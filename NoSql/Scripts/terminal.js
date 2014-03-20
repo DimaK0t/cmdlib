@@ -26,12 +26,16 @@
             url = "Home/Validate";
             var number = command.split(' ')[1];
             getBook(term, number);
+        } else if (command.toLowerCase() == "about") {
+            url = "Home/About";
+            about(term);
         } else if (command == "help") {
             term.echo("books <page_number>");
-            term.echo("updatedb/updatedb clean");
             term.echo("get <book_number>");
+            term.echo("about");
             term.echo("login");
             term.echo("logout");
+            term.echo("updatedb/updatedb clean");
         } else {
             term.echo("Type 'help' to get all avaible commands");
         }
@@ -42,6 +46,12 @@
                     "* Type 'help' to see all commands.",
     });
 });
+
+function about(term) {
+    $.get(url).done(function(data) { term.echo(data, { raw: true }); }).fail(function(xhr) {
+        term.error(xhr.statusText);
+    });
+}
 
 function login(term, user, password, callback) {
     $.post(url, { UserName: user, Password: password, RememberMe: false }).done(function(data) {
