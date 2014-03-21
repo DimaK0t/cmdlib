@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading;
@@ -29,8 +30,6 @@ namespace NoSql.Controllers
 
         public UserManager<ApplicationUser> UserManager { get; private set; }
 
-        //
-        // GET: /Account/Login
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
 
@@ -39,11 +38,8 @@ namespace NoSql.Controllers
             return View();
         }
 
-        //
-        // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
-        //[ValidateAntiForgeryToken]
         public async Task<string> Login(LoginViewModel model, string returnUrl)
         {
             if (ModelState.IsValid)
@@ -64,66 +60,35 @@ namespace NoSql.Controllers
             return null;
         }
 
-       // [HttpPost]
-       // [AllowAnonymous]
-       //// [ValidateAntiForgeryToken]
-       // public async Task<bool> Login(string userName, string password, string returnUrl, bool rememberMe = false)
-       // {
-       //     if (ModelState.IsValid)
-       //     {
-       //         var user = await UserManager.FindAsync(userName, password);
-       //         if (user != null)
-       //         {
-       //             await SignInAsync(user, rememberMe);
-       //             return true;
-       //         }
-       //         else
-       //         {
-       //             ModelState.AddModelError("", "Invalid username or password.");
-       //         }
-       //     }
-
-       //     // If we got this far, something failed, redisplay form
-       //     //  return View(model);
-       //     return false;
-       // }
-
-        //
-        // GET: /Account/Register
         [AllowAnonymous]
         public ActionResult Register()
         {
             return View();
         }
 
-        //
-        // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser() { UserName = model.UserName };
                 var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    await SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("Index", "Home");
-                }
-                else
+                if (!result.Succeeded)
                 {
                     AddErrors(result);
                 }
+                else
+                {
+                    await SignInAsync(user, isPersistent: false);
+                    return new JsonResult() {Data = new {IsFailed = false, Message = "done"}};
+                }
             }
 
-            // If we got this far, something failed, redisplay form
-            return View(model);
+            var errorsMessages = ModelState.Values.SelectMany(x => x.Errors.Select(errors => errors.ErrorMessage)).ToList();
+            return new JsonResult(){Data = new { IsFailed = true, ErrorMessages = errorsMessages}};
         }
 
-        //
-        // POST: /Account/Disassociate
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Disassociate(string loginProvider, string providerKey)
@@ -141,8 +106,6 @@ namespace NoSql.Controllers
             return RedirectToAction("Manage", new { Message = message });
         }
 
-        //
-        // GET: /Account/Manage
         public ActionResult Manage(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
@@ -156,8 +119,6 @@ namespace NoSql.Controllers
             return View();
         }
 
-        //
-        // POST: /Account/Manage
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Manage(ManageUserViewModel model)

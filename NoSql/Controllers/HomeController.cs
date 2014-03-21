@@ -49,27 +49,23 @@ namespace NoSql.Controllers
             var booksPerPage = 30;
             int.TryParse(WebConfigurationManager.AppSettings["booksPerPage"], out booksPerPage);
             var books = _repo.OrderBy(x => x.BookNumber).ToList();
-            List<Book> booksForView;
-            var pagesCount = books.Count() / booksPerPage + (books.Count() % booksPerPage > 0 ? 1 : 0);
 
+            if (pageNumber <= 0)
+            {
+                booksPerPage = books.Count;
+                pageNumber = 1;
+            }
+
+            var pagesCount = books.Count() / booksPerPage + (books.Count() % booksPerPage > 0 ? 1 : 0);
+            
             if (pageNumber > pagesCount)
             {
                 Response.StatusCode = (int) HttpStatusCode.NotFound;
                 return null;
             }
 
-            if (pageNumber <= 0)
-            {
-                booksPerPage = books.Count;
-                booksForView = books;
-                pageNumber = 1;
-                pagesCount = 1;
-            }
-            else
-            {
-                var lastPageAmount = books.Count - ((pageNumber - 1) * booksPerPage);
-                booksForView = books.GetRange((pageNumber - 1) * booksPerPage, Math.Min(lastPageAmount, booksPerPage));
-            }
+            var lastPageAmount = books.Count - ((pageNumber - 1) * booksPerPage);
+            var booksForView = books.GetRange((pageNumber - 1) * booksPerPage, Math.Min(lastPageAmount, booksPerPage));
 
             return new JsonResult() { Data = new {Books = booksForView, PagesCount = pagesCount, CurrentPage = pageNumber }};
         }

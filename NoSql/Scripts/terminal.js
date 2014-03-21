@@ -2,13 +2,16 @@
 
     $('#terminal').terminal(function (command, term) {
         this.url = "";
-        
-        if (command == 'login') {
+        command = command.toLowerCase();
+
+        if (command == 'register') {
+            url = "Account/Register";
+            register(term);
+        } else if (command == 'login') {
             term.login(function(user, password, callback) {
                 url = "/Account/Login";
                 login(term, user, password, callback);
             });
-
         } else if (command == 'logout') {
             url = "Account/Logoff";
             logout(term);
@@ -48,6 +51,7 @@
 });
 
 function about(term) {
+    term.prompt = "hi";
     $.get(url).done(function(data) { term.echo(data, { raw: true }); }).fail(function(xhr) {
         term.error(xhr.statusText);
     });
@@ -62,13 +66,41 @@ function login(term, user, password, callback) {
             callback(null);
         }
     }).fail(function(xhr) {
-        term.error(xhr.statusText);;
+        term.error(xhr.statusText);
     });
 }
 
 function logout(term) {
     $.post(url).done(function () { term.echo("You've successfully signed out"); }).fail(function(xhr) {
         term.error(xhr.statusText);
+    });
+}
+
+function register(term) {
+    term.push(function (userName) {
+        term.set_mask(true).push(function (password) {
+            term.push(function (comfirmPassword) {
+                $.post(url, { UserName: userName, Password: password, ConfirmPassword: comfirmPassword })
+                    .done(function (data) {
+                        if (!data.IsFailed) {
+                            term.echo(data.Message);
+                        } else {
+                            $.each(data.ErrorMessages, function (i, error) {
+                                term.error(error);
+                            });
+                        }
+                    });
+
+                term.pop().pop().pop();
+            }, {
+                prompt: 'confirm password:'
+            }
+            );
+        }, {
+            prompt: 'password:'
+        });
+    }, {
+        prompt: 'user name:'
     });
 }
 
