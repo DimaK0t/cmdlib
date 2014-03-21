@@ -40,7 +40,7 @@ namespace NoSql.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<string> Login(LoginViewModel model, string returnUrl)
+        public async Task<JsonResult> Login(LoginViewModel model, string returnUrl)
         {
             if (ModelState.IsValid)
             {
@@ -48,8 +48,8 @@ namespace NoSql.Controllers
                 if (user != null)
                 {
                     await SignInAsync(user, model.RememberMe);
-
-                    return Guid.NewGuid().ToString();
+                    return new JsonResult() { Data = new { IsFailed = false, Message = string.Format("welcome, {0}", model.UserName), Token = Guid.NewGuid().ToString() } };
+                 
                 }
                 else
                 {
@@ -57,7 +57,8 @@ namespace NoSql.Controllers
                 }
             }
 
-            return null;
+            var errorsMessages = ModelState.Values.SelectMany(x => x.Errors.Select(errors => errors.ErrorMessage)).ToList();
+            return new JsonResult() { Data = new { IsFailed = true, ErrorMessages = errorsMessages } };
         }
 
         [AllowAnonymous]
@@ -81,7 +82,7 @@ namespace NoSql.Controllers
                 else
                 {
                     await SignInAsync(user, isPersistent: false);
-                    return new JsonResult() {Data = new {IsFailed = false, Message = "done"}};
+                    return new JsonResult() {Data = new {IsFailed = false, Message = String.Format("welcome, {0}", model.UserName)}};
                 }
             }
 

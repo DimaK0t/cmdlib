@@ -33,14 +33,7 @@ namespace NoSql.Controllers
         [Authorize(Users = "admin")]
         public void UpdateDb(string flag)
         {
-            try
-            {
-                UpdateDbLiblirary(flag == "clean");
-            }
-            catch (Exception e)
-            {
-                Response.SubStatusCode = (int) HttpStatusCode.InternalServerError;
-            }
+            UpdateDbLiblirary(flag == "clean");
         }
 
         [HttpPost]
@@ -100,7 +93,7 @@ namespace NoSql.Controllers
             return View();
         }
 
-        private void UpdateDbLiblirary(bool cleanBefore = false)
+        private void UpdateDbLiblirary(bool cleanBefore)
         {
             if (cleanBefore)
             {

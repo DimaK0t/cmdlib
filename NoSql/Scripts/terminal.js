@@ -51,7 +51,6 @@
 });
 
 function about(term) {
-    term.prompt = "hi";
     $.get(url).done(function(data) { term.echo(data, { raw: true }); }).fail(function(xhr) {
         term.error(xhr.statusText);
     });
@@ -59,14 +58,15 @@ function about(term) {
 
 function login(term, user, password, callback) {
     $.post(url, { UserName: user, Password: password, RememberMe: false }).done(function(data) {
-        if (data.length != 0) {
-            callback(data);
-            term.echo("Welcome, " + user);
+        if (!data.IsFailed) {
+            callback(data.Token);
+            term.echo(data.Message);
         } else {
             callback(null);
         }
     }).fail(function(xhr) {
         term.error(xhr.statusText);
+        callback(null);
     });
 }
 
@@ -89,7 +89,10 @@ function register(term) {
                                 term.error(error);
                             });
                         }
-                    });
+                    }).
+                fail(function(xhr) {
+                    term.error(xhr.statusText);
+                });
 
                 term.pop().pop().pop();
             }, {
@@ -136,7 +139,6 @@ function getBooks(term, pageNumber) {
                             "<div class='cell'>" + book.Author + "</div>" +
                             "<div class='cell'>" + book.Name + "</div>" +
                             "<div class='cell'>" + book.Extension + "</div>" +
-                            //"<div class='cell id'>" + book.Id + "</div>" +
                         "</div>";
                 });
                 str = str + "</div>";
