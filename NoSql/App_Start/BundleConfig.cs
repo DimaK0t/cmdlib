@@ -20,11 +20,11 @@ namespace NoSql
                         "~/Scripts/modernizr-*"));
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
-                      "~/Scripts/bootstrap.js",
-                      "~/Scripts/respond.js"));
+                      "~/Scripts/bootstrap.min.js",
+                      "~/Scripts/respond.min.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/terminal").Include(
-                      "~/Scripts/jquery.terminal-0.8.2.js",
+                      "~/Scripts/jquery.terminal-0.8.2.min.js",
                       "~/Scripts/terminal.js"
                       ));
 

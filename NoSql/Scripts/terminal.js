@@ -33,12 +33,9 @@
             url = "Home/About";
             about(term);
         } else if (command == "help") {
-            term.echo("books <page_number>");
+            term.echo("books <page_number>/books all");
             term.echo("get <book_number>");
             term.echo("about");
-            term.echo("login");
-            term.echo("logout");
-            term.echo("updatedb/updatedb clean");
         } else {
             term.echo("Type 'help' to get all avaible commands");
         }
